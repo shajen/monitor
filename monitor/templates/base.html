@@ -1,0 +1,110 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>{% block title %}{% endblock %} | monitor</title>
+  <link rel="shortcut icon" href="{% static 'img/favicon.ico' %}">
+
+  <link rel="stylesheet" type="text/css"
+    href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.css">
+  <link rel="stylesheet" type="text/css"
+    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.1/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/dragscroll.css' %}">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dragscroll/0.0.8/dragscroll.min.js"></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.1/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/js-url/2.5.3/url.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/10.2.0/highcharts.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/10.2.0/highcharts-more.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/10.2.0/modules/exporting.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/10.2.0/modules/heatmap.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/10.2.0/modules/data.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/10.2.0/modules/boost-canvas.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/10.2.0/modules/boost.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/10.2.0/modules/accessibility.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mqtt/4.3.7/mqtt.min.js"></script>
+
+  {% block scripts %}
+  {% endblock %}
+  <script src="{% static 'js/field_filter.js' %}"></script>
+
+  <style type="text/css">
+    @media (min-width: 992px) {
+      .dropdown-menu .dropdown-toggle:after {
+        border-top: .3em solid transparent;
+        border-right: 0;
+        border-bottom: .3em solid transparent;
+        border-left: .3em solid;
+      }
+
+      .dropdown-menu .dropdown-menu {
+        margin-left: 0;
+        margin-right: 0;
+      }
+
+      .dropdown-menu li {
+        position: relative;
+      }
+
+      .nav-item .submenu {
+        display: none;
+        position: absolute;
+        left: 100%;
+        top: -7px;
+      }
+
+      .nav-item .submenu-left {
+        right: 100%;
+        left: auto;
+      }
+
+      .dropdown-menu>li:hover {
+        background-color: #f1f1f1
+      }
+
+      .dropdown-menu>li:hover>.submenu {
+        display: block;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  {% include "navbar.html" %}
+  {% block static_content %}
+  {% endblock %}
+  <main role="main">
+    <div class="container-fluid">
+      {% if message_error %}
+      <div class="alert alert-danger" role="alert">
+        {{ message_error }}
+      </div>
+      {% endif %}
+      {% if message_success %}
+      <div class="alert alert-success" role="alert">
+        {{ message_success }}
+      </div>
+      {% endif %}
+    </div>
+    <div class="container-fluid">
+      {% block content %}
+      {% endblock %}
+    </div>
+    <div class="container-fluid">
+      </hr>
+    </div>
+  </main>
+  <footer class="container-fluid text-muted text-center text-small">
+    <hr class="featurette-divider">
+    <p>by <a href="https://shajen.pl">shajen</a> ({% now 'Y' %})</p>
+  </footer>
+</body>
+
+</html>

@@ -1,0 +1,37 @@
+{% load filters %}
+
+<div class="dropdown">
+    <a class="btn btn-primary dropdown-toggle" href="#" id="{{ field }}_list" type="button" data-bs-toggle="dropdown"
+        aria-haspopup="true" aria-expanded="false">
+        Select values (<span id="{{ field }}_list_select_count">0</span>)
+    </a>
+    <div class="dropdown-menu" aria-labelledby="{{ field }}_list" onclick="event.stopPropagation()">
+        {% for option in options %}
+        <a class="dropdown-item mt-1 mb-0 py-0" href="#">
+            {% if option.0 == option.1 %}
+            <input class="form-check-input mt-2 py-0" type="checkbox" name="{{ field }}_select_{{ option.0 }}" value=""
+                id="input_{{ field }}_select_{{ option.0 }}" field-id="{{field}}">
+            <label class="btn btn-primary btn-sm my-0" for="input_{{ field }}_select_{{ option.0 }}">
+                {% if field in "frequency,sample_rate,step_frequency" %}
+                {{ option.2 | frequency }}
+                {% else %}
+                {{ option.2 }}
+                {% endif %}
+            </label>
+            {% else %}
+            <input class="form-check-input mt-2 py-0" type="checkbox"
+                name="{{ field }}_range_{{ option.0 }}_{{ option.1 }}" value=""
+                id="input_{{ field }}_range_{{ option.0 }}_{{ option.1 }}" field-id="{{field}}">
+            <label class="btn btn-primary btn-sm my-0" for="input_{{ field }}_range_{{ option.0 }}_{{ option.1 }}">
+                {% if field in "frequency,sample_rate,step_frequency" %}
+                {{ option.2 | frequency }} - {{ option.3 | frequency }}
+                {% else %}
+                {{ option.2 }} - {{ option.3 }}
+                {% endif %}
+            </label>
+            {% endif %}
+            {{ option.4 | big_number }}
+        </a>
+        {% endfor %}
+    </div>
+</div>

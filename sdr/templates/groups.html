@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% load filters %}
+
+{% block title %}
+Groups
+{% endblock %}
+
+{% block content %}
+<div class="row mt-2">
+    <div class="col-4">
+        <h3>Groups count: {{ total_count }}</h3>
+    </div>
+    <div class="col-4 d-flex justify-content-center">{% include "paginator.html" %}</div>
+    <div class="col-4"></div>
+</div>
+<div class="row mt-2">
+    <div class="col-12">
+        <table class="table table-striped table-bordered table-hover">
+            <tr>
+                <form action="{% url 'sdr_groups' %}" method="get">
+                    {% csrf_token %}
+                    {% include "field_filter.html" with field="name" options=name_list %}
+                    {% include "field_filter_min_max.html" with field="begin_frequency" %}
+                    {% include "field_filter_min_max.html" with field="end_frequency" %}
+                    {% include "field_filter.html" with field="modulation" options=modulation_list %}
+                    {% include "field_filter_min_max.html" with field="transmissions_count" %}
+                    <th>
+                        <input type="hidden" id="input_order_by" value="{{ order_by }}" name="order_by">
+                        <input type="submit" class="btn btn-success" value="Filter">
+                        <a href="{% url 'sdr_groups' %}?reset" class="btn btn-danger">Reset</a>
+                    </th>
+                </form>
+            </tr>
+            <tr>
+                {% include "field_header.html" with field="Name" field_key="name" col="1" %}
+                {% include "field_header.html" with field="Begin frequency" field_key="begin_frequency" col="1" %}
+                {% include "field_header.html" with field="End frequency" field_key="begin_frequency" col="1" %}
+                {% include "field_header.html" with field="Modulation" field_key="modulation" col="1" %}
+                {% include "field_header.html" with field="Transmissions" field_key="transmissions_count" col="1" %}
+                <th class="col-md-1"></th>
+            </tr>
+            {% for group in objects %}
+            <tr>
+                <td class="py-1">{{ group.name }}</td>
+                <td class="py-1">{{ group.begin_frequency | frequency }}</td>
+                <td class="py-1">{{ group.end_frequency | frequency }}</td>
+                <td class="py-1">{{ group.modulation }}</td>
+                <td class="py-1">{{ group.transmissions_count }}</td>
+                <td class="py-1"> <a href="{% url 'sdr_delete_group' group.id%}" class="btn btn-danger">Delete</a> </td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <form action="{% url 'sdr_add_group' %}" method="get">
+                    {% csrf_token %}
+                    {% include "field_input.html" with field="Name" field_key="name" col="1" %}
+                    {% include "field_input.html" with field="Begin frequency" field_key="begin_frequency" col="1" %}
+                    {% include "field_input.html" with field="End frequency" field_key="end_frequency" col="1" %}
+                    <th class="col-md-{{ col }}">
+                        <select class="form-select form-control" name="modulation">
+                            <option value="none" selected disabled hidden> Modulation </option>
+                            <option value="AM">AM</option>
+                            <option value="FM">FM</option>
+                        </select>
+                    </th>
+                    <th></th>
+                    <th>
+                        <input type="submit" class="btn btn-success" value="Create">
+                        <input type="reset" class="btn btn-danger" value="Reset">
+                    </th>
+                </form>
+            </tr>
+        </table>
+    </div>
+</div>
+<div class="row mt-2">
+    <div class="col-4"></div>
+    <div class="col-4 d-flex justify-content-center">{% include "paginator.html" %}</div>
+    <div class="col-4"></div>
+</div>
+{% endblock %}

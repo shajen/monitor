@@ -1,0 +1,9 @@
+{% load bootstrap_icons %}
+
+<th class="col-md-{{ col }}">
+    <nobr>
+        <a href="?{{ params }}&order_by={{ field_key }}">{% bs_icon 'sort-down-alt' %}</a>
+        {{ field }}
+        <a href="?{{ params }}&order_by=-{{ field_key }}">{% bs_icon 'sort-up' %}</a>
+    </nobr>
+</th>

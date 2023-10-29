@@ -1,0 +1,5 @@
+**/.git
+**/.vscode
+**/__pycache__
+public
+db/monitor.sqlite3

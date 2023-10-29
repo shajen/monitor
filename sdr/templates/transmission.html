@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% load filters %}
+{% load static %}
+
+{% block title %}
+Transmission {{ transmission.begin_date }} - {{ transmission.end_date }},
+{{ transmission.frequency | frequency:2 }} - {{transmission.bandwidth | frequency:2 }}
+{% endblock %}
+
+{% block content %}
+<div class="row mt-2">
+    <div class="col-12">
+        <h3>Transmission date: {{ transmission.begin_date }} - {{ transmission.end_date }} ({{ transmission.duration }})
+        </h3>
+        <h3>Transmission name: {{ transmission.group.name }}</h3>
+        <h3>Transmission frequency: {{ transmission.frequency | frequency:2 }} </h3>
+        <h3>Transmission sample rate: {{ transmission.sample_rate | frequency}} </h3>
+        <h3>Transmission modulation: {{ transmission.group.modulation }}</h3>
+        <h3>Device: {{ transmission.device.name }} </h3>
+        <h3>Raw file size: {{ transmission.data_file.size | natural_size }}</h3>
+        <h3>Raw data type: {{ transmission.data_type }}</h3>
+    </div>
+    <div class="col-12">
+        <a href="{% url 'sdr_transmission_data' transmission.id %}?format=raw" class="btn btn-primary" download>
+            raw data (as complex64)</a>
+        <a href="{% url 'sdr_transmission_data' transmission.id %}?format=spectrogram" class="btn btn-primary" download>
+            spectrogram</a>
+        <a href="{% url 'sdr_transmission_data' transmission.id %}" class="btn btn-primary" download>decoded file</a>
+    </div>
+</div>
+<div class="row mt-2">
+    <div class="col-12">
+        <div class="d-flex justify-content-center mb-2">
+            {% if transmission.group.data_type == 'audio' %}
+            <audio controls preload="none">
+                <source src="{% url 'sdr_transmission_data' transmission.id %}" type="audio/mpeg">
+            </audio>
+            {% elif transmission.group.data_type == 'image' %}
+            <image class="img-fluid" src="{% url 'sdr_transmission_data' transmission.id %}"> </image>
+            {% endif %}
+        </div>
+        <div class="d-flex justify-content-center">
+            <image class="img-fluid" src="{% url 'sdr_transmission_data' transmission.id %}?format=spectrogram">
+            </image>
+        </div>
+    </div>
+</div>
+{% endblock %}

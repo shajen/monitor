@@ -1,0 +1,7 @@
+.vscode
+*.sqlite3
+*.pyc
+__pycache__
+passenger_wsgi.py
+tmp*
+public

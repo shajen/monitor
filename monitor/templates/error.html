@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}{{ code }} - {{ name }}{% endblock %}
+
+{% block content %}
+<div class="row my-2">
+    <div class="col-12">
+        <div class="col-md-12 text-center">
+            <span class="display-1 d-block">{{ code }}</span>
+            <div class="mb-4 lead">Oops! {{ description }}</div>
+        </div>
+    </div>
+</div>
+{% endblock %}

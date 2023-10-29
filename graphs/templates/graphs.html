@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}{{ name }} | Graphs{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/graphs.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<form>
+  <div class="row mt-2">
+    <div class="col-2">
+      <h3 class="text-center">{{ name }}</h3>
+    </div>
+    <div class="col-2">
+      <label for="input_datetime_begin" class="form-label">Date time begin</label>
+      <input type="text" class="form-control" id="input_datetime_begin" name="datetime_begin">
+    </div>
+    <div class="col-2">
+      <label for="input_datetime_end" class="form-label">Date time end</label>
+      <input type="text" class="form-control" id="input_datetime_end" name="datetime_end">
+    </div>
+    <div class="col-2">
+      <label for="input_last_hours" class="form-label">Last hours</label>
+      <input type="text" class="form-control" id="input_last_hours" name="last_hours" value="24">
+    </div>
+    <div class="col-2">
+      <label for="input_aggregation_time" class="form-label">Aggregation time</label>
+      <select class="form-select" id="input_aggregation_time" name="aggregation_time">
+        <option value="minute">Minute</option>
+        <option value="hour">Hour</option>
+        <option value="day">Day</option>
+        <option value="week">Week</option>
+        <option value="month">Month</option>
+        <option value="year">Year</option>
+      </select>
+    </div>
+    <div class="col-2">
+      <div>
+        <div>
+          <input type="hidden" id="input_group_id" value="" name="group_id">
+          <input type="hidden" id="input_sensor_id" value="" name="sensor_id">
+          <input type="hidden" id="input_sensor_type_id" value="" name="sensor_type_id">
+          <input type="submit" class="btn btn-success" value="Update">
+          <input type="reset" class="btn btn-danger" value="Reset">
+        </div>
+        <div>
+          <input class="form-check-input" type="checkbox" id="input_min_max" name="min_max" value="">
+          <label class="form-check-label" for="input_min_max">
+            min max
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+<div class="row">
+  <div class="col-12">
+    <div id="chart" style="height: 700px;">
+      <div class="d-flex align-items-center justify-content-center mt-4">
+        <div class="spinner-border" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+      <div class="d-flex justify-content-center">
+        <strong>Loading...</strong>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% load bootstrap_icons %}
+
+<nav class="navbar navbar-expand-md navbar-dark fixed-top sticky-top" style="background-color: #563d7c;">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'index' %}">Monitor</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                {% if full_mode_enabled %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                        Graphs types
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        {% for sensor_type in sensor_types %}
+                        {% if sensor_type.sensor_set.all %}
+                        <li><a class="dropdown-item"
+                                href="{% url 'graphs' %}?sensor_type_id={{ sensor_type.id }}">{{sensor_type.name }}
+                                &raquo</a>
+                            <ul class="submenu dropdown-menu">
+                                {% for sensor in sensor_type.sensor_set.all %}
+                                <li><a class="dropdown-item"
+                                        href="{% url 'graphs' %}?sensor_id={{ sensor.id }}">{{sensor.name }}</a>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                        {% endif %}
+                        {% endfor %}
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                        Graphs groups
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        {% for sensors_group in sensors_groups %}
+                        <a class="dropdown-item" href="{% url 'graphs' %}?group_id={{ sensors_group.id }}">
+                            {{ sensors_group.name }}
+                        </a>
+                        {% endfor %}
+                    </ul>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'logs' %}">Logs</a></li>
+                {% endif %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                        Sdr
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="{% url 'sdr_config' %}"> Configuration </a>
+                        <a class="dropdown-item" href="{% url 'sdr_groups' %}"> Groups </a>
+                        <a class="dropdown-item" href="{% url 'sdr_spectrograms' %}"> Spectrograms </a>
+                        <a class="dropdown-item" href="{% url 'sdr_transmissions' %}"> Transmissions </a>
+                    </ul>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'admin:index' %}">Admin</a></li>
+            </ul>
+
+            <ul class="nav navbar-nav ms-auto">
+                <li class="nav-item" id=" nav-username">
+                    <div class="nav-link navbar-brand">
+                        {% bs_icon 'person' %}
+                        {% if user.is_authenticated %}
+                        {{ user.get_username }}
+                        {% else %}
+                        guest
+                        {% endif %}
+                    </div>
+                </li>
+                <li class="nav-item">
+                    {% if user.is_authenticated %}
+                    <a class="nav-link navbar-brand" href="{% url 'admin:logout' %}">Log out</a>
+                    {% else %}
+                    <a class="nav-link navbar-brand" href="{% url 'admin:login' %}">Log in</a>
+                    {% endif %}
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

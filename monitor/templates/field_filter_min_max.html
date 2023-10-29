@@ -1,0 +1,10 @@
+<th>
+    <input type="text" class="form-control" id="input_{{ field }}_min" placeholder="Min value" name="{{ field }}_min">
+    <input type="text" class="form-control" id="input_{{ field }}_max" placeholder="Max value" name="{{ field }}_max">
+    {% if options %}
+    {% include "field_filter_options.html" %}
+    {% else %}
+    <input type="text" class="form-control" id="input_{{ field }}_exact" placeholder="Exact value"
+        name="{{ field }}_exact">
+    {% endif %}
+</th>

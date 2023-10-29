@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+
+{% load filters %}
+{% load static %}
+
+{% block title %}
+Configuration
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/config.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="modal fade" id="save_success" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Configuration</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Save success!
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="config" style="display: none;" mqtt_port="{{ mqtt.port_ws }}" mqtt_user="{{ mqtt.user }}"
+    mqtt_password="{{ mqtt.password }}">
+</div>
+<div class="row mt-2">
+    <div class="col-2"></div>
+
+    <div class="col-8">
+        <div class="row">
+            <div class="col">
+                <h1>Scanner settings</h1>
+                <h3>Select scanner:</h3>
+                <div id="scanner_selector">
+                </div>
+            </div>
+            <div class="col">
+                <h1>Sdr device settings</h1>
+                <h3>Select sdr device:</h3>
+                <div id="device_selector">
+                </div>
+            </div>
+        </div>
+        <hr class="hr hr-blurry" />
+        <div class="row">
+            <div class="col">
+                <h5>Ignored frequencies</h5>
+                <table class="table table-striped table-bordered table-hover" id="ignored_frequencies">
+                    <tr>
+                        <th>Frequency [Hz]</th>
+                        <th>Bandwidth [Hz]</th>
+                        <th><button id="new_ignored_frequency" type="button" class="btn btn-success" disabled="disabled"
+                                autocomplete="off">New</button></th>
+                    </tr>
+                    <tr>
+                    </tr>
+                </table>
+                <h5>Other</h5>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="expert_mode_checkbox" autocomplete="off">
+                    <label class="form-check-label" for="flexSwitchCheckDefault">Expert mode</label>
+                </div>
+                <div id="expert_mode_section" style="display: none;">
+                    <div class="alert alert-danger" role="alert"> Make sure you know what you're doing! </div>
+                    <table class="table table-striped table-bordered table-hover">
+                        <tr>
+                            <th>Name</th>
+                            <th>Value</th>
+                            <th>Unit</th>
+                        </tr>
+                        <tr>
+                            <td>Transmission max noise time</td>
+                            <td><input class="form-control" disabled="disabled" autocomplete="off"
+                                    id="transmission_max_noise_time_ms"></td>
+                            <td>ms</td>
+                        </tr>
+                        <tr>
+                            <td>Transmission min time</td>
+                            <td><input class="form-control" disabled="disabled" autocomplete="off"
+                                    id="transmission_min_time_ms"></td>
+                            <td>ms</td>
+                        </tr>
+                        <tr>
+                            <td>Transmission sample rate</td>
+                            <td><input class="form-control" disabled="disabled" autocomplete="off"
+                                    id="transmission_sample_rate"></td>
+                            <td>Hz</td>
+                        </tr>
+                        <tr>
+                            <td>Transmission group size</td>
+                            <td><input class="form-control" disabled="disabled" autocomplete="off"
+                                    id="transmission_group_size"></td>
+                            <td>Hz</td>
+                        </tr>
+                        <tr>
+                            <td>Scanning time</td>
+                            <td><input class="form-control" disabled="disabled" autocomplete="off"
+                                    id="scanning_time_ms">
+                            </td>
+                            <td>ms</td>
+                        </tr>
+                        <tr>
+                            <td>Noise detection margin</td>
+                            <td><input class="form-control" disabled="disabled" autocomplete="off"
+                                    id="noise_detection_margin"></td>
+                            <td>dBfs</td>
+                        </tr>
+                        <tr>
+                            <td>Noise learing time</td>
+                            <td><input class="form-control" disabled="disabled" autocomplete="off"
+                                    id="noise_mearing_time_seconds"></td>
+                            <td>s</td>
+                        </tr>
+                        <tr>
+                            <td>Torn transmission learning time</td>
+                            <td><input class="form-control" disabled="disabled" autocomplete="off"
+                                    id="torn_transmission_learning_time_seconds"></td>
+                            <td>s</td>
+                        </tr>
+                        <tr>
+                            <td>Logs directory</td>
+                            <td><input class="form-control" disabled="disabled" autocomplete="off" id="logs_directory">
+                            </td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>File log level</td>
+                            <td><input class="form-control" disabled="disabled" autocomplete="off" id="file_log_level">
+                            </td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Console log level</td>
+                            <td><input class="form-control" disabled="disabled" autocomplete="off"
+                                    id="console_log_level">
+                            </td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Cores</td>
+                            <td><input class="form-control" disabled="disabled" autocomplete="off" id="cores_limit">
+                            </td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Memory</td>
+                            <td><input class="form-control" disabled="disabled" autocomplete="off" id="memory_limit">
+                            </td>
+                            <td>MB</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="col">
+                <h5>Scanned frequencies</h5>
+                <table class="table table-striped table-bordered table-hover" id="scanned_frequencies">
+                    <tr>
+                        <th>Frequency start [Hz]</th>
+                        <th>Frequency stop [Hz]</th>
+                        <th>Sample rate [Hz]</th>
+                        <th><button id="new_scanned_frequency" type="button" class="btn btn-success" disabled="disabled"
+                                autocomplete="off">New</button></th>
+                    </tr>
+                    <tr>
+                    </tr>
+                </table>
+                <h5>Gains</h5>
+                <table class="table table-striped table-bordered table-hover" id="gains">
+                    <tr>
+                        <th>Name</th>
+                        <th>Value</th>
+                        <th>Min</th>
+                        <th>Max</th>
+                        <th>Step</th>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="d-grid gap-2">
+                    <button id="save" type="button" class="btn btn-primary" disabled="disabled"
+                        autocomplete="off">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-2"></div>
+</div>
+{% endblock %}

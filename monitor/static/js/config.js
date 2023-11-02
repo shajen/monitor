@@ -64,7 +64,7 @@ function onConnect(client) {
                 for (const gain of devices[device_id]['gains']) {
                     gains[gain['name']] = gain['value']
                 }
-                let range = { "device_serial": device_id, "device_gains": gains, "ranges": devices[device_id]["ranges"] };
+                let range = { "device_enabled": devices[device_id]["enabled"], "device_serial": device_id, "device_gains": gains, "ranges": devices[device_id]["ranges"] };
                 ranges.push(range);
             }
             let config = scanners[scanner_id]['config'];
@@ -144,6 +144,7 @@ function selectScanner(id) {
         scanners[id]['config']['ignored_frequencies'].push({ 'frequency': 0, 'bandwidth': 0 });
         $("#save").prop("disabled", false);
     });
+    $("#device_enabled").prop("disabled", true);
     $("#new_scanned_frequency").prop("disabled", true);
 }
 
@@ -206,6 +207,13 @@ function addIgnoredFrequency(id, frequency, bandwidth) {
 }
 
 function selectDevice(id) {
+    $("#device_enabled").prop("checked", devices[id]['enabled']);
+    $("#device_enabled").prop("disabled", false);
+    $("#device_enabled").unbind("click");
+    $("#device_enabled").click(function () {
+        devices[id]['enabled'] = $(this).is(':checked');
+        $("#save").prop("disabled", false);
+    });
     $("#scanned_frequencies").find("tr:gt(0)").remove();
     $("#gains").find("tr:gt(0)").remove();
     devices[id]['ranges'] = devices[id]['ranges'].sort((a, b) => a['start'] > b['start']);

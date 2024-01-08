@@ -21,7 +21,6 @@ class Tuya(threading.Thread):
         self.__logger = logging.getLogger("Tuya")
         self.__openapi = TuyaOpenAPI(config["endpoint"], config["access_id"], config["access_key"])
         self.__openapi.connect(config["user"], config["password"], "48", "SmartLife")
-        self.__openapi.token_info.expire_time = 0
 
     def run(self):
         while self.__is_runnig:

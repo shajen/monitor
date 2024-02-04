@@ -1,8 +1,10 @@
-from django.db.models.functions import TruncMinute, TruncHour, TruncDay, TruncWeek, TruncMonth, TruncYear
-from django.db.models import Min, Max, Avg, Count
-from django.db import models
-from django.utils import timezone
 from datetime import timedelta
+from django.db import models
+from django.db.models import Count, F, Value
+from django.db.models import F, Func, Value
+from django.db.models import Min, Max, Avg, Count
+from django.db.models.functions import TruncMinute, TruncHour, TruncDay, TruncWeek, TruncMonth, TruncYear
+from django.utils import timezone
 
 
 class SensorType(models.Model):
@@ -39,7 +41,7 @@ class Sensor(models.Model):
     def __str__(self):
         return "%s (%s)" % (self.name, self.serial)
 
-    def get_data(self, aggregation_time, min_max_enabled):
+    def get_data(self, datetime_begin, datetime_end, aggregation_time, min_max_enabled):
         data = {}
         data["name"] = self.name
         data["unit"] = self.sensor_type.unit
@@ -60,10 +62,11 @@ class Sensor(models.Model):
             trunc = TruncMinute
 
         measurements = (
-            self.measurement_set.annotate(date=trunc("posted_date"))
+            self.measurement_set.filter(posted_date__range=(datetime_begin, datetime_end))
+            .annotate(date=trunc("posted_date"))
             .values("date")
             .annotate(min=Min("value"), max=Max("value"), avg=Avg("value"), count=Count("id"))
-            .order_by()
+            .order_by("date")
         )
         data["mean_data"] = [[m["date"].timestamp() * 1000, m["avg"]] for m in measurements]
         if min_max_enabled:

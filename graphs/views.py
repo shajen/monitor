@@ -9,6 +9,23 @@ from monitor.settings import FALLBACK_API_KEY
 
 
 @require_http_methods(["GET"])
+def get_datetime_range(request):
+    now = timezone.now()
+    last_hours = request.GET.get("last_hours", "")
+    datetime_begin = request.GET.get("datetime_begin", "")
+    datetime_end = request.GET.get("datetime_end", "")
+
+    if not last_hours and not datetime_begin:
+        last_hours = 24
+    if last_hours:
+        datetime_begin = now - timedelta(hours=int(last_hours))
+        datetime_end = now
+    if not datetime_end:
+        datetime_end = now
+    return (datetime_begin, datetime_end)
+
+
+@require_http_methods(["GET"])
 def temperature_measurement_add(request):
     data = {"status": 0}
     errors = []
@@ -42,19 +59,7 @@ def temperature_measurement_add(request):
 @login_required()
 @permission_required("graphs.view_sensor", raise_exception=True)
 def prefetch_sensors_measurement(request, sensors):
-    now = timezone.now()
-    last_hours = request.GET.get("last_hours", "")
-    datetime_begin = request.GET.get("datetime_begin", "")
-    datetime_end = request.GET.get("datetime_end", "")
-
-    if not last_hours and not datetime_begin:
-        last_hours = 24
-    if last_hours:
-        datetime_begin = now - timedelta(hours=int(last_hours))
-        datetime_end = now
-    if not datetime_end:
-        datetime_end = now
-
+    (datetime_begin, datetime_end) = get_datetime_range(request)
     measurements = Measurement.objects.filter(posted_date__range=(datetime_begin, datetime_end)).order_by("posted_date")
     return sensors.prefetch_related(Prefetch("measurement_set", queryset=measurements))
 
@@ -78,7 +83,7 @@ def get_sensors(request):
             except:
                 sensors = Sensor.objects.none()
                 name = ""
-    return (prefetch_sensors_measurement(request, sensors), name)
+    return (sensors, name)
 
 
 @require_http_methods(["GET"])
@@ -90,7 +95,8 @@ def graphs(request):
         aggregation_time = request.GET.get("aggregation_time", "minute")
         min_max_enabled = "min_max" in request.GET
         (sensors, data["name"]) = get_sensors(request)
-        data["sensors"] = [s.get_data(aggregation_time, min_max_enabled) for s in sensors]
+        (datetime_begin, datetime_end) = get_datetime_range(request)
+        data["sensors"] = [s.get_data(datetime_begin, datetime_end, aggregation_time, min_max_enabled) for s in sensors]
         return JsonResponse(data, safe=False)
     else:
         (_, name) = get_sensors(request)

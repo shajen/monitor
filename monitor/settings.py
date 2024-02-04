@@ -22,7 +22,11 @@ STATICFILES_DIRS = [os.path.join(os.path.dirname(__file__), "static/")]
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "public", "media")
 
-DATABASES = {"default": json.loads(os.getenv("DATABASE") or '{"ENGINE": "django.db.backends.sqlite3","NAME": "db/monitor.sqlite3"}')}
+DATABASES = {
+    "default": json.loads(
+        os.getenv("DATABASE") or '{"ENGINE": "django.db.backends.sqlite3","NAME": "db/monitor.sqlite3"}'
+    )
+}
 
 MQTT = {
     "host": os.getenv("MQTT_HOST") or "sdr-broker",
@@ -124,6 +128,10 @@ LOGGING = {
     },
     "loggers": {
         "django.db": {"level": "INFO"},
+        "django.db.backends": {
+            "level": "INFO",
+            "handlers": ["console"],
+        },
     },
 }
 
@@ -142,12 +150,10 @@ def detect_timezone():
     if timezone:
         try:
             zoneinfo.ZoneInfo(timezone)
-            print("timezone: %s" % timezone)
             return timezone
         except:
             pass
     else:
-        print("timezone: UTC")
         return "UTC"
 
 
@@ -164,12 +170,3 @@ USE_TZ = True
 REGISTRATION_OPEN = False
 
 INTERNAL_IPS = ["127.0.0.1"]
-
-import logging
-from django.db import connection
-
-connection.force_debug_cursor = True  # Change to use_debug_cursor in django < 1.8
-
-l = logging.getLogger("django.db.backends")
-l.setLevel(logging.DEBUG)
-l.addHandler(logging.StreamHandler())

@@ -18,3 +18,4 @@ scipy
 matplotlib
 tflite-runtime
 tuya-iot-py-sdk
+psycopg

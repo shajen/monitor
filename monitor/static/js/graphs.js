@@ -23,15 +23,38 @@ function onReady() {
         $("#input_datetime_begin").val("");
         $("#input_datetime_end").val("");
     });
+    $("#graphs_form").submit(function (e) {
+        e.preventDefault();
+        loadPlot();
+    });
     loadPlot();
 }
 
 function loadPlot() {
-    const url = window.location.href + "&format=json";
-    $.getJSON(url, function (json) { renderPlot(json) });
+    $('#chart').hide();
+    $('#loading').show();
+    let old_params = new URLSearchParams(window.location.search);
+    let new_params = {
+        datetime_begin: $("#input_datetime_begin").val(),
+        datetime_end: $("#input_datetime_end").val(),
+        last_count: $("#input_last_count").val(),
+        last_type: $("#input_last_type").val(),
+        aggregation_time: $("#input_aggregation_time").val(),
+        'sensor_id': old_params.get('sensor_id'),
+        'sensor_type_id': old_params.get('sensor_type_id'),
+        'group_id': old_params.get('group_id'),
+    };
+    if ($("#input_min_max").is(':checked')) {
+        new_params['min_max'] = '';
+    }
+    window.history.pushState(null, null, window.location.pathname + "?" + $.param(new_params));
+    new_params['format'] = 'json';
+    $.getJSON(window.location.pathname, new_params, function (json) { renderPlot(json) });
 }
 
 function renderPlot(data) {
+    $('#loading').hide();
+    $('#chart').show();
     const is_single_sensor = data.sensors.length == 1;
     let series = [];
     let units = new Set();

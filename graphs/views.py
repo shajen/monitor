@@ -18,8 +18,6 @@ def get_datetime_range(request):
     datetime_begin = request.GET.get("datetime_begin", "")
     datetime_end = request.GET.get("datetime_end", "")
 
-    if len(request.GET) <= 2:
-        return (now - relativedelta(days=7), datetime.datetime.max)
     if last_count and last_type:
         return (now - relativedelta(**{last_type: int(last_count)}), datetime.datetime.max)
     else:

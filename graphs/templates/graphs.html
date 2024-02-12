@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block content %}
-<form>
+<form id="graphs_form">
   <div class="row mt-2">
     <div class="col-2">
       <h3 class="text-center">{{ name }}</h3>
@@ -28,7 +28,7 @@
       </div>
       <div class="row">
         <div class="col-6">
-          <input type="text" class="form-control" id="input_last_count" name="last_count" value="7">
+          <input type="text" class="form-control" id="input_last_count" name="last_count" value="1">
         </div>
         <div class="col-6">
           <select class="form-select" id="input_last_type" name="last_type">
@@ -74,7 +74,7 @@
 </form>
 <div class="row">
   <div class="col-12">
-    <div id="chart" style="height: 700px;">
+    <div id="loading" style="height: 700px;">
       <div class="d-flex align-items-center justify-content-center mt-4">
         <div class="spinner-border" role="status">
           <span class="visually-hidden">Loading...</span>
@@ -84,6 +84,7 @@
         <strong>Loading...</strong>
       </div>
     </div>
+    <div id="chart" style="height: 700px; display: none; "></div>
   </div>
 </div>
 {% endblock %}

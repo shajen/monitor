@@ -1,28 +1,29 @@
+from dateutil.relativedelta import relativedelta
 from django.contrib.admin.views.decorators import staff_member_required as login_required
 from django.contrib.auth.decorators import permission_required
+from django.db.models import Prefetch
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
-from django.db.models import Prefetch
 from graphs.models import *
 from monitor.settings import FALLBACK_API_KEY
+import datetime
 
 
 @require_http_methods(["GET"])
 def get_datetime_range(request):
     now = timezone.now()
-    last_hours = request.GET.get("last_hours", "")
+    last_count = request.GET.get("last_count", "")
+    last_type = request.GET.get("last_type", "")
     datetime_begin = request.GET.get("datetime_begin", "")
     datetime_end = request.GET.get("datetime_end", "")
 
-    if not last_hours and not datetime_begin:
-        last_hours = 24
-    if last_hours:
-        datetime_begin = now - timedelta(hours=int(last_hours))
-        datetime_end = now
-    if not datetime_end:
-        datetime_end = now
-    return (datetime_begin, datetime_end)
+    if len(request.GET) <= 2:
+        return (now - relativedelta(days=7), datetime.datetime.max)
+    if last_count and last_type:
+        return (now - relativedelta(**{last_type: int(last_count)}), datetime.datetime.max)
+    else:
+        return (datetime_begin or datetime.datetime.min, datetime_end or datetime.datetime.max)
 
 
 @require_http_methods(["GET"])

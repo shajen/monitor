@@ -23,8 +23,24 @@
       <input type="text" class="form-control" id="input_datetime_end" name="datetime_end">
     </div>
     <div class="col-2">
-      <label for="input_last_hours" class="form-label">Last hours</label>
-      <input type="text" class="form-control" id="input_last_hours" name="last_hours" value="24">
+      <div class="row">
+        <label class="form-label">Datetime latest range</label>
+      </div>
+      <div class="row">
+        <div class="col-6">
+          <input type="text" class="form-control" id="input_last_count" name="last_count" value="7">
+        </div>
+        <div class="col-6">
+          <select class="form-select" id="input_last_type" name="last_type">
+            <option value="minutes">Minutes</option>
+            <option value="hours">Hours</option>
+            <option value="days" selected>Days</option>
+            <option value="weeks">Weeks</option>
+            <option value="months">Months</option>
+            <option value="years">Years</option>
+          </select>
+        </div>
+      </div>
     </div>
     <div class="col-2">
       <label for="input_aggregation_time" class="form-label">Aggregation time</label>

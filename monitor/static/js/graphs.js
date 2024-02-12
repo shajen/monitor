@@ -8,12 +8,18 @@ function onReady() {
     });
 
     $("#input_datetime_begin").change(function () {
-        $("#input_last_hours").val("");
+        $("#input_last_type").val("");
+        $("#input_last_count").val("");
     });
     $("#input_datetime_end").change(function () {
-        $("#input_last_hours").val("");
+        $("#input_last_type").val("");
+        $("#input_last_count").val("");
     });
-    $("#input_last_hours").change(function () {
+    $("#input_last_type").change(function () {
+        $("#input_datetime_begin").val("");
+        $("#input_datetime_end").val("");
+    });
+    $("#input_last_count").change(function () {
         $("#input_datetime_begin").val("");
         $("#input_datetime_end").val("");
     });

@@ -164,6 +164,7 @@ USE_I18N = True
 USE_L10N = False
 DATE_FORMAT = "Y-m-d"
 DATETIME_FORMAT = "Y-m-d H:i:s"
+SHORT_DATETIME_FORMAT = "Y-m-d H:i:s"
 
 USE_TZ = True
 

@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import permission_required
 from django.db.models import Prefetch
 from django.http import JsonResponse
 from django.shortcuts import render
+from django.utils.timezone import make_aware
 from django.views.decorators.http import require_http_methods
 from graphs.models import *
 from monitor.settings import FALLBACK_API_KEY
@@ -19,9 +20,17 @@ def get_datetime_range(request):
     datetime_end = request.GET.get("datetime_end", "")
 
     if last_count and last_type:
-        return (now - relativedelta(**{last_type: int(last_count)}), datetime.datetime.max)
+        return (now - relativedelta(**{last_type: int(last_count)}), make_aware(datetime.datetime.max))
     else:
-        return (datetime_begin or datetime.datetime.min, datetime_end or datetime.datetime.max)
+        if datetime_begin:
+            datetime_begin = datetime.datetime.strptime(datetime_begin, "%Y-%m-%d %H:%M")
+        else:
+            datetime_begin = datetime.datetime.min
+        if datetime_end:
+            datetime_end = datetime.datetime.strptime(datetime_end, "%Y-%m-%d %H:%M")
+        else:
+            datetime_end = datetime.datetime.max
+        return (make_aware(datetime_begin), make_aware(datetime_end))
 
 
 @require_http_methods(["GET"])

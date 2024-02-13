@@ -1,5 +1,6 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
+from django.utils.timezone import make_aware
 from sdr.models import *
 from humanize import naturalsize
 
@@ -23,16 +24,10 @@ class SpectrogramReader:
             return Device.objects.create(name=name, raw_name=name)
 
     def round_down_date(self, date):
-        t = int(date.timestamp()) + date.utcoffset().total_seconds()
-        return timezone.datetime.fromtimestamp(
-            (t // self.__aggregate_seconds) * self.__aggregate_seconds - date.utcoffset().total_seconds(), timezone.get_current_timezone()
-        )
+        return date.replace(hour=0, minute=0, second=0, microsecond=0)
 
     def round_up_date(self, date):
-        t = int(date.timestamp()) + date.utcoffset().total_seconds()
-        return timezone.datetime.fromtimestamp(
-            (t // self.__aggregate_seconds + 1) * self.__aggregate_seconds - date.utcoffset().total_seconds(), timezone.get_current_timezone()
-        )
+        return date.replace(hour=23, minute=59, second=59, microsecond=999999)
 
     def check_spectrogram_integrity(self, s):
         y_size = np.frombuffer(s.labels, dtype=np.uint64).size
@@ -87,7 +82,7 @@ class SpectrogramReader:
         m = self.__regex.match(topic)
         if m:
             (timestamp, begin_frequency, end_frequency, step_frequency, samples_count) = struct.unpack("<QLLLL", message.payload[:24])
-            dt = timezone.datetime.fromtimestamp(timestamp / 1000, timezone.get_current_timezone())
+            dt = make_aware(timezone.datetime.fromtimestamp(timestamp / 1000))
             powers = np.array(struct.unpack("<%db" % samples_count, message.payload[24:])).astype(np.int8)
             self.append_spectrogram(m.group(1), dt, begin_frequency, end_frequency, step_frequency, powers)
             return True

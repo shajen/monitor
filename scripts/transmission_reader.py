@@ -1,5 +1,6 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
+from django.utils.timezone import make_aware
 from sdr.models import *
 from humanize import naturalsize
 from django.db.models import F
@@ -90,7 +91,7 @@ class TransmissionReader:
         if m:
             self.__logger.debug(topic)
             (timestamp, begin_frequency, end_frequency, samples_count) = struct.unpack("<QLLL", message.payload[:20])
-            dt = timezone.datetime.fromtimestamp(timestamp / 1000, timezone.get_current_timezone())
+            dt = make_aware(timezone.datetime.fromtimestamp(timestamp / 1000))
             self.append_transmission(m.group(1), dt, begin_frequency, end_frequency, message.payload[20:], samples_count, m.group(2))
             return True
         return False

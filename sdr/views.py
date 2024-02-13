@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import permission_required
 from django.db.models import F, Count
 from django.db.models.functions import TruncSecond, TruncDate, Length
 from django.shortcuts import render
-from django.utils import timezone
+from django.utils.timezone import localtime
 from django.views.decorators.http import require_http_methods
 from monitor.settings import BASE_DIR
 from sdr.models import *
@@ -17,13 +17,11 @@ import monitor.settings
 
 
 def get_download_filename(name, id, extension, dt):
-    dt = dt.astimezone(timezone.get_current_timezone())
-    return "%s%d_%s.%s" % (name, id, dt.strftime("%Y%m%d_%H%M%S"), extension)
+    return "%s%d_%s.%s" % (name, id, localtime(dt).strftime("%Y%m%d_%H%M%S"), extension)
 
 
 def get_download_raw_iq_filename(name, id, frequency, sample_rate, dt):
-    dt = dt.astimezone(timezone.get_current_timezone())
-    return "%s%d_%s_%d_%d_fc.raw" % (name, id, dt.strftime("%Y%m%d_%H%M%S"), frequency, sample_rate)
+    return "%s%d_%s_%d_%d_fc.raw" % (name, id, localtime(dt).strftime("%Y%m%d_%H%M%S"), frequency, sample_rate)
 
 
 @login_required()

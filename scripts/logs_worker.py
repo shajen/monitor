@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 from django.db.models import Max
-from django.utils import timezone
+from django.utils.timezone import localtime, make_aware
 from logs.models import *
 from monitor.settings import IP_GEOLOCATION_API_KEY
 import logs.models
@@ -22,7 +22,7 @@ def parse(logger, line):
     return {
         "domain": data[0],
         "ip": data[1],
-        "datetime": datetime.datetime.strptime(data[4] + " " + data[5], "%d/%b/%Y:%X %z"),
+        "datetime": make_aware(datetime.datetime.strptime(data[4] + " " + data[5], "%d/%b/%Y:%X %z")),
         "request": data[6],
         "status_code": data[7],
         "referrer": data[9],
@@ -59,7 +59,7 @@ def run(*args):
     logger = logging.getLogger("logs")
     logger.setLevel(logging.INFO)
     latest_date = Request.objects.aggregate(Max("posted_date"))["posted_date__max"]
-    latest_date = latest_date.astimezone(timezone.get_current_timezone())
+    latest_date = localtime(latest_date)
     logger.info("latest log date: %s" % latest_date.strftime("%Y-%m-%d %H:%M:%S"))
     processed = 0
     skipped = 0

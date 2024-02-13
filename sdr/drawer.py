@@ -1,4 +1,5 @@
 from django.utils import timezone
+from django.utils.timezone import make_aware
 from monitor.settings import BASE_DIR
 import sdr.templatetags.filters
 import PIL.Image
@@ -59,7 +60,7 @@ class Drawer:
             d2 = dates[i] // 1000
             if d1 // self.__seconds_step != d2 // self.__seconds_step and minimal_diff <= i - last_draw:
                 last_draw = i
-                dt = timezone.datetime.fromtimestamp(dates[i] / 1000)
+                dt = make_aware(timezone.datetime.fromtimestamp(dates[i] / 1000))
                 text = dt.strftime("%H:%M:%S")
                 w, h = draw.textsize(text, **self.__text_size_style)
                 draw.text((x_offset, (i - h // 2 + y_offset) // zoom_out), text, **self.__text_style)

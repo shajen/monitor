@@ -1,6 +1,7 @@
 from sdr.models import *
 from sdr.signals import *
 from django.utils import timezone
+from django.utils.timezone import localtime
 
 import scripts.utils
 import tflite_runtime.interpreter as tflite
@@ -83,7 +84,7 @@ class Classifier(threading.Thread):
                 class_name = self.get_class(t)
                 t.audio_class_id = self.get_audio_class_id(class_name)
                 t.save()
-                self.__logger.info("transmission, id: %d, frequency: %d Hz, date: %s, class: %s " % (t.id, t.middle_frequency(), t.end_date, class_name))
+                self.__logger.info("transmission, id: %d, frequency: %d Hz, date: %s, class: %s " % (t.id, t.middle_frequency(), localtime(t.end_date), class_name))
                 if not self.__is_working:
                     break
             time.sleep(1)

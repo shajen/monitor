@@ -3,11 +3,13 @@ from django.contrib.admin.views.decorators import staff_member_required as login
 from django.contrib.auth.decorators import permission_required
 from django.db.models import Prefetch
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
+from django.urls import reverse
 from django.utils.timezone import make_aware
 from django.views.decorators.http import require_http_methods
 from graphs.models import *
 from monitor.settings import FALLBACK_API_KEY
+from urllib.parse import urlencode
 import datetime
 
 
@@ -79,19 +81,23 @@ def get_sensors(request):
         group = SensorsGroup.objects.filter(id=request.GET["group_id"], visible=True).first()
         sensors = group.sensors.filter_latest().order_by("name").all()
         name = group.name
+        preset = group.preset
     except:
         try:
             sensorType = SensorType.objects.filter(id=request.GET["sensor_type_id"], visible=True).first()
             sensors = Sensor.objects.filter_latest().filter(visible=True, sensor_type=sensorType).order_by("name")
             name = sensorType.name
+            preset = None
         except:
             try:
                 sensors = Sensor.objects.filter_latest().filter(id=request.GET["sensor_id"], visible=True)
                 name = sensors.first().name
+                preset = None
             except:
                 sensors = Sensor.objects.none()
                 name = ""
-    return (sensors, name)
+                preset = None
+    return (sensors, name, preset)
 
 
 @require_http_methods(["GET"])
@@ -102,10 +108,13 @@ def graphs(request):
         data = {"status": 0}
         aggregation_time = request.GET.get("aggregation_time", "minute")
         min_max_enabled = "min_max" in request.GET
-        (sensors, data["name"]) = get_sensors(request)
+        (sensors, data["name"], _) = get_sensors(request)
         (datetime_begin, datetime_end) = get_datetime_range(request)
         data["sensors"] = [s.get_data(datetime_begin, datetime_end, aggregation_time, min_max_enabled) for s in sensors]
         return JsonResponse(data, safe=False)
     else:
-        (_, name) = get_sensors(request)
+        (_, name, preset) = get_sensors(request)
+        if "aggregation_time" not in request.GET and preset:
+            q = request.META["QUERY_STRING"]
+            return redirect(reverse("graphs") + "?" + q + "&" + urlencode(preset.get_params()))
         return render(request, "graphs.html", {"name": name})

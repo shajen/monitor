@@ -25,11 +25,18 @@ class MeasurementAdmin(admin.ModelAdmin):
 
 class SensorsGroupAdmin(admin.ModelAdmin):
     list_per_page = 100
-    list_display = ("id", "name", "visible", "posted_date")
+    list_display = ("id", "name", "visible", "preset", "posted_date")
     filter_horizontal = ("sensors",)
+
+
+class PresetAdmin(admin.ModelAdmin):
+    list_per_page = 100
+    list_display = ("id", "begin_date", "end_date", "last_count", "last_type", "aggregation_time", "min_max")
+
 
 if FULL_MODE_ENABLED:
     admin.site.register(SensorType, SensorTypeAdmin)
     admin.site.register(Sensor, SensorAdmin)
     admin.site.register(Measurement, MeasurementAdmin)
     admin.site.register(SensorsGroup, SensorsGroupAdmin)
+    admin.site.register(Preset, PresetAdmin)

@@ -2,6 +2,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from graphs.models import *
 
 import logging
+import math
 import re
 
 
@@ -71,6 +72,13 @@ class HomeAssistant:
                 return True
             value = float(payload)
             (type, unit) = self.get_type_and_unit(measurement)
-            self.on_sensor(device, measurement, type, unit, value)
-            return True
+            if math.isnan(value):
+                self.__logger.info(
+                    "invalid value, device: %s, measurement: %s, type: %s, value: %s %s"
+                    % (device, measurement, type, value, unit)
+                )
+                return False
+            else:
+                self.on_sensor(device, measurement, type, unit, value)
+                return True
         return False

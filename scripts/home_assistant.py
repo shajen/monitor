@@ -27,6 +27,9 @@ class HomeAssistant:
             "pm10": "µg/m³",
             "pm2_5": "µg/m³",
             "rssi": "dBm",
+            "iaq": "",
+            "co2": "",
+            "breath_voc": "",
         }
 
     def get_type_and_unit(self, measurement):

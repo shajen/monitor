@@ -41,7 +41,8 @@ class Drawer:
             step = (end_frequency - begin_frequency) // self.__frequency_labels_count
             step2 = image.width / self.__frequency_labels_count
             text = sdr.templatetags.filters.frequency(begin_frequency + x * step, 2)
-            w, h = draw.textsize(text, **self.__text_size_style)
+            (l, t, r, b) = draw.textbbox([0, 0], text, **self.__text_size_style)
+            (w, h) = (r - l, b - t)
             draw.text((x * step2 - w // 2, y_offset - h), text, **self.__text_style)
             if include_up:
                 draw.line(((x * step2, y_offset - h - self.__line_width), (x * step2, y_offset - h)), **self.__line_style)
@@ -62,7 +63,8 @@ class Drawer:
                 last_draw = i
                 dt = make_aware(timezone.datetime.fromtimestamp(dates[i] / 1000))
                 text = dt.strftime("%H:%M:%S")
-                w, h = draw.textsize(text, **self.__text_size_style)
+                (l, t, r, b) = draw.textbbox([0, 0], text, **self.__text_size_style)
+                (w, h) = (r - l, b - t)
                 draw.text((x_offset, (i - h // 2 + y_offset) // zoom_out), text, **self.__text_style)
                 draw.line(((x_offset + w, (i + y_offset) // zoom_out), (x_offset + w + self.__line_width, (i + y_offset) // zoom_out)), **self.__line_style)
         return np.array(image).reshape(image.height, image.width, 3)
@@ -73,7 +75,8 @@ class Drawer:
         size = image.width // (data_max - data_min + 1)
         for value in range(data_min, data_max + 1):
             index = value - data_min
-            w, h = draw.textsize(str(value), **self.__text_size_style)
+            (l, t, r, b) = draw.textbbox([0, 0], str(value), **self.__text_size_style)
+            (w, h) = (r - l, b - t)
             if (value - 1) // self.__power_step != value // self.__power_step:
                 if text_on_top:
                     draw.text((index * size - w // 2 + size // 2, 0), str(value), **self.__text_style)

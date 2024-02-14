@@ -1,9 +1,10 @@
 #!/usr/bin/python3
 
 import logging
+import math
+import monitor.settings as settings
 import threading
 import time
-import monitor.settings as settings
 
 from sdr.models import *
 from tuya_iot import TuyaOpenAPI
@@ -54,8 +55,13 @@ class Tuya(threading.Thread):
 
     def __add_measurement(self, serial, type, unit, value):
         self.__logger.info("new measurement, serial: %s, type: %s, value: %s %s" % (serial, type, value, unit))
-        sensor = self.__get_sensor(serial, type, unit)
-        Measurement.objects.create(sensor=sensor, value=value)
+        if math.isnan(float(value)):
+            self.__logger.warning(
+                "invalid measurement value, serial: %s, type: %s, value: %s %s" % (serial, type, value, unit)
+            )
+        else:
+            sensor = self.__get_sensor(serial, type, unit)
+            Measurement.objects.create(sensor=sensor, value=value)
 
     def __parse_device(self, serial, status):
         for data in status["result"]:

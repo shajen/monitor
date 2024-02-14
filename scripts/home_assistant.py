@@ -25,7 +25,7 @@ class HomeAssistant:
             "pressure": "hPa",
             "humidity": "%",
             "pm10": "µg/m³",
-            "pm25": "µg/m³",
+            "pm2_5": "µg/m³",
             "rssi": "dBm",
         }
 

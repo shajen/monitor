@@ -22,7 +22,7 @@ def parse(logger, line):
     return {
         "domain": data[0],
         "ip": data[1],
-        "datetime": make_aware(datetime.datetime.strptime(data[4] + " " + data[5], "%d/%b/%Y:%X %z")),
+        "datetime": localtime(datetime.datetime.strptime(data[4] + " " + data[5], "%d/%b/%Y:%X %z")),
         "request": data[6],
         "status_code": data[7],
         "referrer": data[9],

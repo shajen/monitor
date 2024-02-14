@@ -21,7 +21,7 @@ class Reader(threading.Thread):
         self.__parsers.append(ISpindel())
         self.__parsers.append(HomeAssistant())
 
-        self.__client = paho.mqtt.client.Client()
+        self.__client = paho.mqtt.client.Client(paho.mqtt.client.CallbackAPIVersion.VERSION1)
         self.__client.username_pw_set(config["user"], config["password"])
         self.__client.user_data_set(self)
         self.__client.connect(config["host"], config["port_tcp"])

@@ -170,10 +170,8 @@ def transmission_data(request, transmission_id):
                 file.write(convert_uint8_to_float32(data[i * block_size : (i + 1) * block_size]).tobytes())
         return file_response(filename)
     elif t.group.modulation in ["FM", "AM"]:
-        filename = get_download_filename("transmission", t.id, "mp3", t.begin_date)
-        factor = t.sample_size
-        (data, sample_rate) = decode(data[: factor * (t.data_file.size // factor)].reshape(-1, factor), sample_rate, t.group.modulation)
-        save(data, sample_rate, filename)
+        filename = get_download_filename("transmission", t.id, "wav", t.begin_date)
+        sdr.signals.decode_audio(t.data_file.path, filename, t.group.modulation, sample_rate)
         return file_response(filename)
 
 

@@ -5,3 +5,4 @@ __pycache__
 passenger_wsgi.py
 tmp*
 public
+sdr/decoders/*.py
